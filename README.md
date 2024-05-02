@@ -213,3 +213,96 @@ del /q /f c:\kworking\agent.crt C:\Windows\cert.exe
 ```
 Por fim, o comando PowerShell executa o arquivo Agent.exe, assinado digitalmente com um certificado válido da "PB03 TRANSPORT LTD".
 
+## 8.2.2 Indicadores de Comprometimento (IOC)
+Caminhos e Binários da Kaseya:
+Caminho: C:\Program Files (x86)\Kaseya\…\AgentMon.exe
+Descrição: Binário legítimo da Kaseya usado para execução remota. O Agentmon.exe é um componente crítico do software Kaseya VSA (Virtual System Administrator). Ele funciona como um agente de software instalado em dispositivos gerenciados e desempenha papéis essenciais na comunicação e gerenciamento remoto.
+Arquivos e Executáveis Maliciosos:
+Caminho: C:\windows\cert.exe
+Descrição: O arquivo C:\windows\cert.exe não é um componente legítimo do software Kaseya. Na verdade, a presença desse arquivo nessa pasta específica é um forte indício de atividade maliciosa relacionada ao ataque de ransomware Kaseya VSA de 2021.
+Caminho: C:\kworking\agent.crt
+Descrição: Esse arquivo malicioso desempenhou um papel inicial no ataque. Era armazenado temporariamente na pasta C:\kworking\ - diretório padrão usado pelo software Kaseya. O agent.crt era, na verdade, um arquivo compactado contendo a carga principal do ransomware. O malware usava o programa legítimo "certutil.exe" do Windows para decodificar o agent.crt e liberar o ransomware no sistema.
+Caminho: C:\kworking\agent.exe
+Descrição: é o arquivo executável do agente Kaseya VSA (Virtual System Administrator). O VSA é uma plataforma de gerenciamento de TI usada por provedores de serviços gerenciados (MSPs) e equipes internas de TI para monitorar e gerenciar remotamente dispositivos de rede, como servidores, desktops e dispositivos móveis.
+Observação: Binário malicioso primário REvil, que solta o legítimo msmpeng.exe e a DLL maliciosa mpsvc.dll.
+Atividades de Ataque:
+Endereços IP:
+18.223.199.234
+161.35.239.148
+35.226.94.113
+162.253.124.162
+Acessos a URLs:
+/dl.asp
+/cgi-bin/KUpload.dll
+/userFilterTableRpt.asp
+Criação de Arquivos no Servidor VSA da Kaseya:
+Caminho: Kaseya/WebPages/ManagedFiles/VSATicketFiles/Screenshot.jpg
+Caminho: /Kaseya/webpages/managedfiles/vsaticketfiles/agent.crt
+Caminho: /Kaseya/webpages/managedfiles/vsaticketfiles/agent.exe
+
+## 8.3 Relatório da Equipe de Inteligência
+	
+Em 2 de julho de 2021, uma série de relatórios de clientes da Kaseya revelou comportamento incomum em endpoints gerenciados pelo Kaseya VSA, seguido por relatos de ransomware em execução nesses endpoints. Nosso alto índice de confiança indica que esta campanha foi orquestrada pelo grupo de ransomware REvil conhecido como Sodinokibi. 
+Esta vulnerabilidade foi descoberta anteriormente pelo Instituto Holandês de Divulgação de Vulnerabilidades (DIVD CSIRTD) e relatada à Kaseya, mas nossa investigação descobriu que um patch ainda estava em andamento no momento do ataque, portanto os clientes não tiveram acesso à correção. Em relação à vítima, identificamos dois perfis: aqueles que usavam o Kaseya VSA diretamente e aqueles que dependiam de serviços MSP para gerenciar sua infraestrutura. Um ataque direto ao servidor MSP que posteriormente afetou os clientes foi um ataque típico à cadeia de suprimentos. Estimamos que mais de 30 MSPs e pelo menos 1.500 clientes foram afetados. Estamos confiantes de que o grupo REvil/Sodinokibi demonstrou a capacidade de ter um impacto significativo num grande número de vítimas, ganhandolhes o estatuto de “inovadores” na Comunicação Estruturada de Ameaças (STIX 2.1). 
+O incidente sinalizou uma evolução nas táticas do grupo, até então não havia dados sobre a exploração de vulnerabilidades zero-day. Existe alguma incerteza sobre o âmbito do plano de ataque, a velocidade de execução, o âmbito do impacto e o grau de exploração da vulnerabilidade do dia 0, o que indica uma preparação significativa para o ataque. O REvil já teve como alvo vítimas em vários setores, incluindo transporte, finanças, petróleo e gás, tecnologia, saúde, manufatura e telecomunicações. Embora muitos dos ataques do grupo sejam considerados oportunistas, a nossa investigação reforça a nossa elevada confiança de que o sector financeiro continua a ser um alvo principal. Estas vantagens baseiam-se, entre outros aspectos, na confidencialidade da informação tratada e nas oportunidades de ganhos financeiros que este sector apresenta ao Grupo.
+### 8.3.1 Principais lacunas de inteligência
+Identidade da vítima:
+Não está claro como o grupo REvil identificou outras vítimas além daqueles cujos servidores VSA estavam conectados à Internet. A metodologia utilizada para identificar infraestruturas vulneráveis para outras vítimas não foi detalhada. Dois. Vetores de ataque iniciais contra a infraestrutura Kaseya:
+Devido à falta de informações detalhadas sobre o incidente de Kaseya, o vetor exato do ataque inicial à infraestrutura é desconhecido. Compreender como o REvil comprometeu inicialmente os servidores da Kaseya pode fornecer informações importantes sobre futuras melhorias de segurança. 3. Detalhes de detecção de vulnerabilidade:
+Não há informações sobre como a equipe do REvil descobriu vulnerabilidades específicas na infraestrutura da Kaseya. Compreender esse processo pode ajudá-lo a melhorar a segurança, prevendo possíveis pontos de exploração. 4. Informações sobre empresas e países afetados:
+Não foram encontradas informações sobre quais empresas foram afetadas pelo ransomware ou em quais países as vítimas estavam localizadas. Essas informações são importantes para entender a abrangência geográfica do evento. 5. Plano de ataque:
+A natureza oportunista ou estruturada do ataque não está claramente definida. A falta de detalhes sobre o plano de ataque, seja ele um ataque de oportunidade ou um ataque preventivo, é uma omissão significativa. 6. Impacto geral da campanha:
+O impacto total da campanha é desconhecido. Para avaliar a verdadeira dimensão de um incidente, é essencial obter informações detalhadas, incluindo custos financeiros, perturbações operacionais e recuperação. 7. Assine o REvil:
+Não há informações específicas sobre outros membros do REvil. Se você continuar a implantar a atividade, qual TTP você está usando atualmente? 8. Motivações e objetivos específicos:
+As motivações e objetivos exatos do grupo REvil para atacar diferentes sectores não são totalmente compreendidos. Compreender essas motivações pode ajudá-lo a evitá-las no futuro. Estas lacunas representam áreas onde informações adicionais seriam valiosas para compreender completamente o incidente e informar futuras estratégias de segurança.
+
+### 8.3.2 Correção do Ransomware
+ 	Link com o passo a passo para aplicar a “vacina” contra o ransomware o REvil_documentation.pdf (nomoreransom.org) 
+● Link para baixar a “vacina” contra o ransomware.
+ Bitdefender Offers Free Universal Decryptor for REvil/Sodinokibi Ransomware
+
+   ### 8.3.3 Sugestões de Melhotias
+
+● Aplicar patches/atualizações imediatamente após o lançamento/teste, desenvolver/manter o programa de correção, se necessário.
+⦁	Implemente filtros de spam nos gateways de e-mail e mantenha assinaturas e regras atualizadas.
+⦁	Bloquear endereços IP suspeitos no firewall e mantenha as regras do firewall atualizadas
+⦁	Implemente o controle de acesso com base no princípio de menor privilégio.
+⦁	Desative o uso de SMBv1 (e todos os outros serviços e protocolos vulneráveis) e requer pelo menos SMBv2. Restringindo/Minimizando/eliminando o uso de RDP
+Além das melhoras práticas citadas acima, sugerimos a adoção de diversas medidas de segurança extras conforme apresentado na tabela a seguir. Estes são controles sugeridos pelo CIS Controls como medidas de mitigação e correção de vulnerabilidades para um ambiente exposto aos tipos de TTP’s explorados pelo Grupo REvil.
+ChatGPT
+8.3 Relatório da Equipe de Inteligência
+Em 2 de julho de 2021, uma série de relatórios de clientes da Kaseya revelou comportamento incomum em endpoints gerenciados pelo Kaseya VSA, seguido por relatos de ransomware em execução nesses endpoints. Nosso alto índice de confiança indica que esta campanha foi orquestrada pelo grupo de ransomware REvil conhecido como Sodinokibi. Esta vulnerabilidade foi descoberta anteriormente pelo Instituto Holandês de Divulgação de Vulnerabilidades (DIVD CSIRTD) e relatada à Kaseya, mas nossa investigação descobriu que um patch ainda estava em andamento no momento do ataque, portanto os clientes não tiveram acesso à correção.
+
+Em relação à vítima, identificamos dois perfis: aqueles que usavam o Kaseya VSA diretamente e aqueles que dependiam de serviços MSP para gerenciar sua infraestrutura. Um ataque direto ao servidor MSP que posteriormente afetou os clientes foi um ataque típico à cadeia de suprimentos. Estimamos que mais de 30 MSPs e pelo menos 1.500 clientes foram afetados. Estamos confiantes de que o grupo REvil/Sodinokibi demonstrou a capacidade de ter um impacto significativo num grande número de vítimas, ganhando-lhes o estatuto de "inovadores" na Comunicação Estruturada de Ameaças (STIX 2.1).
+
+O incidente sinalizou uma evolução nas táticas do grupo, até então não havia dados sobre a exploração de vulnerabilidades zero-day. Existe alguma incerteza sobre o âmbito do plano de ataque, a velocidade de execução, o âmbito do impacto e o grau de exploração da vulnerabilidade do dia 0, o que indica uma preparação significativa para o ataque. O REvil já teve como alvo vítimas em vários setores, incluindo transporte, finanças, petróleo e gás, tecnologia, saúde, manufatura e telecomunicações. Embora muitos dos ataques do grupo sejam considerados oportunistas, a nossa investigação reforça a nossa elevada confiança de que o setor financeiro continua a ser um alvo principal. Estas vantagens baseiam-se, entre outros aspectos, na confidencialidade da informação tratada e nas oportunidades de ganhos financeiros que este setor apresenta ao Grupo.
+
+### 8.3.1 Principais lacunas de inteligência
+Identidade da vítima: Não está claro como o grupo REvil identificou outras vítimas além daqueles cujos servidores VSA estavam conectados à Internet. A metodologia utilizada para identificar infraestruturas vulneráveis para outras vítimas não foi detalhada.
+Vetores de ataque iniciais contra a infraestrutura Kaseya: Devido à falta de informações detalhadas sobre o incidente de Kaseya, o vetor exato do ataque inicial à infraestrutura é desconhecido. Compreender como o REvil comprometeu inicialmente os servidores da Kaseya pode fornecer informações importantes sobre futuras melhorias de segurança.
+Detalhes de detecção de vulnerabilidade: Não há informações sobre como a equipe do REvil descobriu vulnerabilidades específicas na infraestrutura da Kaseya. Compreender esse processo pode ajudá-lo a melhorar a segurança, prevendo possíveis pontos de exploração.
+Informações sobre empresas e países afetados: Não foram encontradas informações sobre quais empresas foram afetadas pelo ransomware ou em quais países as vítimas estavam localizadas. Essas informações são importantes para entender a abrangência geográfica do evento.
+Plano de ataque: A natureza oportunista ou estruturada do ataque não está claramente definida. A falta de detalhes sobre o plano de ataque, seja ele um ataque de oportunidade ou um ataque preventivo, é uma omissão significativa.
+Impacto geral da campanha: O impacto total da campanha é desconhecido. Para avaliar a verdadeira dimensão de um incidente, é essencial obter informações detalhadas, incluindo custos financeiros, perturbações operacionais e recuperação.
+Assinatura do REvil: Não há informações específicas sobre outros membros do REvil. Se você continuar a implantar a atividade, qual TTP você está usando atualmente?
+Motivações e objetivos específicos: As motivações e objetivos exatos do grupo REvil para atacar diferentes setores não são totalmente compreendidos. Compreender essas motivações pode ajudá-lo a evitá-las no futuro. Estas lacunas representam áreas onde informações adicionais seriam valiosas para compreender completamente o incidente e informar futuras estratégias de segurança.
+8.3.2 Correção do Ransomware
+Link com o passo a passo para aplicar a "vacina" contra o ransomware o REvil_documentation.pdf (nomoreransom.org)
+Link para baixar a "vacina" contra o ransomware.
+Bitdefender Offers Free Universal Decryptor for REvil/Sodinokibi Ransomware
+8.3.3 Sugestões de Melhorias
+Aplicar patches/atualizações imediatamente após o lançamento/teste, desenvolver/manter o programa de correção, se necessário.
+Implemente filtros de spam nos gateways de e-mail e mantenha assinaturas e regras atualizadas.
+Bloquear endereços IP suspeitos no firewall e mantenha as regras do firewall atualizadas.
+Implemente o controle de acesso com base no princípio de menor privilégio.
+Desative o uso de SMBv1 (e todos os outros serviços e protocolos vulneráveis) e requer pelo menos SMBv2. Restringindo/Minimizando/eliminando o uso de RDP.
+Além das melhores práticas citadas acima, sugerimos a adoção de diversas medidas de segurança extras conforme apresentado na tabela a seguir. Estes são controles sugeridos pelo CIS Controls como medidas de mitigação e correção de vulnerabilidades para um ambiente exposto aos tipos de TTPs explorados pelo Grupo REvil.
+
+# Lições aprendidas
+O ataque da Kaseya serve como um lembrete urgente da importância crucial da segurança cibernética em cadeias de suprimentos digitais. A necessidade de aprimorar práticas de defesa, fortalecer a colaboração entre os setores e estar sempre pronto para responder a incidentes cibernéticos jamais foi tão evidente.
+O ataque da Kaseya acende um alerta vermelho: a vigilância constante, a implementação diligente de melhores práticas de segurança cibernética e o desenvolvimento de estratégias resilientes são essenciais para proteger as organizações contra ameaças cibernéticas cada vez mais sofisticadas.
+Juntos, podemos construir um futuro digital mais seguro e resiliente.
+
+# Feedback
+Havendo necessidade de mais esclarecimentos, solicito que entre em contato através do e-mail gabriel.damas057@gmail.com.
+
