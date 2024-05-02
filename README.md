@@ -18,7 +18,7 @@
    - **Relatório de Inteligência:** Destaques e análises da equipe.
    - **Lições Aprendidas:** Melhorias implementadas após o incidente.
 
-![Texto Alternativo]()
+![timeline](https://github.com/gabrielDamDam/relatorio-Kaseya/blob/main/image.png)
 
 2. **Contextualização**
    Em 2 de julho de 2021, a empresa Kaseya foi alvo de um ataque de ransomware de alta engenhosidade. Este evento teve repercussões globais devido à sua base de clientes extensa e ao papel crítico que desempenha na operação de sistemas de TI. O incidente destacou a importância da segurança cibernética e da proteção de infraestruturas críticas de TI.
