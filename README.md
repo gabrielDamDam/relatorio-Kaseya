@@ -3,7 +3,6 @@
 **Data:** 24/04/2024  
 **Relevância:** Alta
 
-**Autores:** Juliano Soares Corrêa, Bruno de Souza Coutinho, Felipe Limeira de Azeredo, Romulo Willian Sidooski, Luiz Felipe Coelho Varanda, Gabriel Damas  
 **Público-Alvo:** ACADITI  
 **Principais Decisões:** Este relatório contém as Técnicas, Táticas e Procedimentos para sanitizar um ambiente contaminado com o Ransomware de alta engenhosidade utilizado no ataque à empresa Kaseya.
 
